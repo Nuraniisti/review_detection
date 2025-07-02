@@ -101,11 +101,11 @@ tabs = st.tabs(["Beranda", "Deteksi", "Tentang"])
 # -------------------------------
 with tabs[0]:
     
-    st.title("Selamat Datang di Aplikasi Deteksi Ulasan Palsu")
+    st.title("Selamat Datang di Website Deteksi Ulasan Palsu")
     st.write("---------------------------------------------🔍 Cerdas Memilah, Tepat Memilih 🔍-----------------------------------------")
     st.write("""
              
-    Aplikasi ini menggunakan model **DistilBERT** untuk mengklasifikasikan apakah sebuah ulasan termasuk:
+    Website ini akan membantu anda mendeteksi apakah sebuah ulasan merupakan ulasan asli atau palsu dengan mengklasifikasikan ulasan pada kategori:
     
     - **OR (Asli)**
     - **CG (Palsu)**
@@ -115,7 +115,7 @@ with tabs[0]:
     - Menampilkan visualisasi probabilitas
     - Mengunduh hasil klasifikasi
     
-    Silakan buka tab **Deteksi** untuk mulai.
+    Silakan klik tab **Deteksi** untuk mulai.
     """)
 
 # -------------------------------
