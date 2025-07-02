@@ -84,8 +84,8 @@ if missing_files:
 
 try:
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = DistilBertForSequenceClassification.from_pretrained(model_path).to(device)
-    tokenizer = DistilBertTokenizer.from_pretrained(model_path)
+    model = DistilBertForSequenceClassification.from_pretrained('./saved_model').to(device)
+    tokenizer = DistilBertTokenizer.from_pretrained('./saved_model')
     model.eval()
 except Exception as e:
     st.error(f"Gagal memuat model atau tokenizer: {str(e)}")
