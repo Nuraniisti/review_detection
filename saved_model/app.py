@@ -182,13 +182,13 @@ with tabs[1]:
 # Halaman: Tentang
 # -------------------------------
 with tabs[2]:
-    st.title("Tentang Aplikasi")
+    st.title("Tentang Website")
     st.markdown("""
     Ulasan produk memainkan peran yang sangat penting dalam memengaruhi keputusan pembelian, terutama dalam platform e-commerce. Ulasan yang ditulis oleh pelanggan sebelumnya memberikan gambaran nyata mengenai kualitas, performa, dan kepuasan terhadap suatu produk. Dalam konteks ini, ulasan berfungsi sebagai referensi yang membantu calon pembeli untuk menilai apakah produk tersebut layak dibeli. Oleh karena itu, keaslian dan kredibilitas ulasan menjadi faktor krusial dalam menjaga kepercayaan konsumen.
 
 Sayangnya, kemunculan ulasan palsu menjadi tantangan besar dalam dunia digital. Ulasan palsu sering kali dibuat untuk tujuan manipulatif, baik untuk meningkatkan penjualan produk tertentu secara tidak jujur, maupun untuk menjatuhkan reputasi kompetitor. Hal ini dapat merugikan pembeli dan merusak integritas ekosistem e-commerce secara keseluruhan.
 
-Untuk menjawab permasalahan tersebut, dikembangkanlah sebuah sistem deteksi ulasan palsu berbasis machine learning menggunakan model DistilBERT. Sistem ini dirancang untuk secara otomatis mengklasifikasikan teks ulasan ke dalam dua kategori, yaitu OR (Original) dan CG (Computer Generated). Aplikasi ini dibangun menggunakan teknologi Python dan Streamlit, serta didukung oleh pustaka NLP dari Hugging Face. Dengan adanya sistem ini, diharapkan proses identifikasi ulasan yang tidak autentik dapat dilakukan secara lebih efisien, sehingga pengguna dapat mengambil keputusan berdasarkan informasi yang lebih valid dan terpercaya.
+Untuk menjawab permasalahan tersebut, dikembangkanlah sebuah sistem deteksi ulasan palsu berbasis machine learning menggunakan model DistilBERT. Sistem ini dirancang untuk secara otomatis mengklasifikasikan teks ulasan ke dalam dua kategori, yaitu OR (Original) dan CG (Computer Generated). Website ini dibangun menggunakan teknologi Python dan Streamlit, serta didukung oleh pustaka NLP dari Hugging Face. Dengan adanya sistem ini, diharapkan proses identifikasi ulasan yang tidak autentik dapat dilakukan secara lebih efisien, sehingga pengguna dapat mengambil keputusan berdasarkan informasi yang lebih valid dan terpercaya.
 
                 
 """)
