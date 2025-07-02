@@ -1,5 +1,6 @@
-streamlit
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.0.1
+streamlit
 transformers==4.31.0
 pandas
 scikit-learn
