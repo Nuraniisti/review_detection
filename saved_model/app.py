@@ -75,7 +75,7 @@ def predict_from_csv(df, model, tokenizer, device):
 # -------------------------------
 # Load Model & Tokenizer
 # -------------------------------
-model_path = '.'  # Asumsikan semua file model di direktori yang sama
+model_path = 'saved_model'
 required_files = ['model.safetensors', 'config.json', 'vocab.txt', 'tokenizer_config.json', 'special_tokens_map.json']
 missing_files = [f for f in required_files if not os.path.exists(os.path.join(model_path, f))]
 if missing_files:
@@ -84,8 +84,8 @@ if missing_files:
 
 try:
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = DistilBertForSequenceClassification.from_pretrained('./saved_model').to(device)
-    tokenizer = DistilBertTokenizer.from_pretrained('./saved_model')
+    model = DistilBertForSequenceClassification.from_pretrained(model_path).to(device)
+    tokenizer = DistilBertTokenizer.from_pretrained(model_path)
     model.eval()
 except Exception as e:
     st.error(f"Gagal memuat model atau tokenizer: {str(e)}")
