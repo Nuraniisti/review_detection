@@ -1,9 +1,14 @@
+from utils.save_to_db import init_db, save_detection_record
+
 import streamlit as st
 import pandas as pd
 import re
 import torch
 import os
 from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
+
+# Buat database dan tabel
+init_db()
 
 # -------------------------------
 # CSS: Komposisi warna dan elemen visual
@@ -171,14 +176,13 @@ with tabs[0]:
 # -------------------------------
 with tabs[1]:
     st.markdown("<h2 style='color:#2E86C1;'>Deteksi Ulasan dengan VeriView</h2>", unsafe_allow_html=True)
-    st.write("Masukkan ulasan atau unggah file CSV untuk mendeteksi keaslian ulasan produk."
-    , unsafe_allow_html=True)
     input_option = st.radio("Pilih metode input:", ("Input Teks Manual", "Unggah File CSV"))
+
     if input_option == "Input Teks Manual":
-        user_input = st.text_area("Masukkan Ulasan:", height=150, placeholder="Tulis ulasan produk di sini...")
+        user_input = st.text_area("Masukkan teks ulasan :", height=150, placeholder="Tulis ulasan di sini...")
         if st.button("Prediksi"):
             if user_input.strip() == "":
-                st.warning("Harap masukkan ulasan teks!")
+                st.warning("Harap masukkan teks ulasan!")
             else:
                 label, confidence, probs = predict_review(user_input, model, tokenizer, device)
                 st.subheader("Hasil Prediksi:")
@@ -193,6 +197,11 @@ with tabs[1]:
                     'Probabilitas': [probs[0]*100, probs[1]*100]
                 })
                 st.bar_chart(probs_df.set_index('Kelas'))
+
+                # ✅ Simpan ke DB
+                save_detection_record(user_input, label, confidence, probs[0]*100, probs[1]*100, sumber="manual")
+                st.success("Hasil prediksi telah disimpan ke database.")
+                
     else:
         st.subheader("Unggah File CSV")
         uploaded_file = st.file_uploader("Pilih file CSV (harus memiliki kolom 'review')", type=["csv"])
@@ -203,7 +212,6 @@ with tabs[1]:
                     st.error("File CSV harus memiliki kolom 'review'!")
                 else:
                     result_df = predict_from_csv(df, model, tokenizer, device)
-
                     st.subheader("Hasil Prediksi")
                     st.dataframe(result_df)
 
@@ -214,6 +222,10 @@ with tabs[1]:
                         'Jumlah': class_counts.values
                     })
                     st.bar_chart(class_counts_df.set_index('Kelas'))
+
+                    # ✅ Simpan semua ke DB
+                    for row in result_df.itertuples():
+                        save_detection_record(row.Review, row.Label, row._3, row._4, row._5, sumber="csv")
 
                     csv = result_df.to_csv(index=False)
                     st.download_button(
