@@ -1,4 +1,4 @@
-from utils.save_to_db import init_db, save_detection_record
+from utils.save_to_db import init_db, save_detection_record, lihat_riwayat
 
 import streamlit as st
 import pandas as pd
@@ -106,8 +106,6 @@ def predict_from_csv(df, model, tokenizer, device):
             'Probabilitas CG (%)': probs[0] * 100,
             'Probabilitas OR (%)': probs[1] * 100
         })
-        # Simpan otomatis ke DB cloud
-        save_detection_record("CSV Upload", text, label, confidence, probs[0]*100, probs[1]*100)
     return pd.DataFrame(results)
 
 # -------------------------------
@@ -126,7 +124,7 @@ if missing_files:
     st.stop()
 
 try:
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cpu')  # Gunakan CPU agar kompatibel di cloud
     model = DistilBertForSequenceClassification.from_pretrained(
         model_path,
         local_files_only=True,
@@ -140,7 +138,7 @@ except Exception as e:
 # -------------------------------
 # Navigasi Tab Horizontal (di kanan)
 # -------------------------------
-tabs = st.tabs(["Beranda", "Deteksi", "Tentang"])
+tabs = st.tabs(["Beranda", "Deteksi", "Riwayat", "Tentang"])
 
 # -------------------------------
 # Halaman: Beranda
@@ -160,8 +158,8 @@ with tabs[0]:
         <h3 style='text-align:center; color:#2E86C1; margin-bottom:10px;'>🔍 Cerdas Memilah, Tepat Memilih 🔍</h3>
         <p style='text-align:justify; color:#111;'>
             Website ini akan membantu anda mendeteksi apakah sebuah ulasan merupakan ulasan <b>asli</b> atau <b>palsu</b> dengan mengklasifikasikan ulasan pada kategori:<br>
-            <b>- OR (Asli)</b><br>
-            <b>- CG (Palsu)</b>
+            <b>OR (Asli)</b><br>
+            <b>CG (Palsu)</b>
         </p>
         <b>Fitur utama:</b>
         <ul>
@@ -169,7 +167,7 @@ with tabs[0]:
             <li>Menampilkan visualisasi probabilitas</li>
             <li>Mengunduh hasil klasifikasi</li>
         </ul>
-                <b>Silakan klik tab <span style='color:#2E86C1;'>Deteksi</span> untuk mulai.</b>
+        <b>Silakan klik tab <span style='color:#2E86C1;'>Deteksi</span> untuk mulai.</b>
     </div>
     """, unsafe_allow_html=True)
 
@@ -200,8 +198,8 @@ with tabs[1]:
                 })
                 st.bar_chart(probs_df.set_index('Kelas'))
 
-                # Simpan otomatis ke DB cloud
-                save_detection_record("Manual", user_input, label, confidence, probs[0]*100, probs[1]*100)
+                # ✅ Simpan ke DB
+                save_detection_record(user_input, label, confidence, probs[0]*100, probs[1]*100, sumber="manual")
                 st.success("Hasil prediksi telah disimpan ke database.")
                 
     else:
@@ -241,11 +239,21 @@ with tabs[1]:
     st.markdown("</div>", unsafe_allow_html=True)
 
 # -------------------------------
-# Halaman: Tentang
+# Halaman: Riwayat Deteksi
 # -------------------------------
 with tabs[2]:
-    st.markdown("<h2 style='color:#2E86C1; '>Tentang VeriView</h2>", unsafe_allow_html=True)
-    
+    st.markdown("<h2 style='color:#2E86C1;'>Riwayat Deteksi Ulasan</h2>", unsafe_allow_html=True)
+    data = lihat_riwayat(20)
+    df = pd.DataFrame(data, columns=[
+        "id", "sumber", "review", "label", "confidence", "prob_cg", "prob_or", "waktu"
+    ])
+    st.dataframe(df)
+
+# -------------------------------
+# Halaman: Tentang
+# -------------------------------
+with tabs[3]:
+    st.markdown("<h2 style='color:#2E86C1;'>Tentang VeriView</h2>", unsafe_allow_html=True)
     st.markdown("""
     <div style='text-align:justify; color:#111;'>
     Ulasan produk memainkan peran yang sangat penting dalam memengaruhi keputusan pembelian, terutama dalam platform e-commerce. Ulasan yang ditulis oleh pelanggan sebelumnya memberikan gambaran nyata mengenai kualitas, performa, dan kepuasan terhadap suatu produk. Dalam konteks ini, ulasan berfungsi sebagai referensi yang membantu calon pembeli untuk menilai apakah produk tersebut layak dibeli. Oleh karena itu, keaslian dan kredibilitas ulasan menjadi faktor krusial dalam menjaga kepercayaan konsumen.<br><br>
@@ -253,7 +261,6 @@ with tabs[2]:
     Untuk menjawab permasalahan tersebut, dikembangkanlah sebuah sistem deteksi ulasan palsu berbasis machine learning menggunakan model DistilBERT. Sistem ini dirancang untuk secara otomatis mengklasifikasikan teks ulasan ke dalam dua kategori, yaitu OR (Original) dan CG (Computer Generated). Website ini dibangun menggunakan teknologi Python dan Streamlit, serta didukung oleh pustaka NLP dari Hugging Face. Dengan adanya sistem ini, diharapkan proses identifikasi ulasan yang tidak autentik dapat dilakukan secara lebih efisien, sehingga pengguna dapat mengambil keputusan berdasarkan informasi yang lebih valid dan terpercaya.
     </div>
     <i>Semoga membantu Anda mengambil keputusan yang lebih cerdas dan terpercaya!</i>
-    </div>
     """, unsafe_allow_html=True)
 
 # -------------------------------
@@ -265,4 +272,3 @@ st.markdown("""
     &copy; 2025 <b style='color:#2E86C1'>VeriView</b> | Dibuat dengan ❤️ oleh nistiaen
 </div>
 """, unsafe_allow_html=True)
-
