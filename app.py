@@ -106,6 +106,8 @@ def predict_from_csv(df, model, tokenizer, device):
             'Probabilitas CG (%)': probs[0] * 100,
             'Probabilitas OR (%)': probs[1] * 100
         })
+        # Simpan otomatis ke DB cloud
+        save_detection_record("CSV Upload", text, label, confidence, probs[0]*100, probs[1]*100)
     return pd.DataFrame(results)
 
 # -------------------------------
@@ -198,8 +200,8 @@ with tabs[1]:
                 })
                 st.bar_chart(probs_df.set_index('Kelas'))
 
-                # ✅ Simpan ke DB
-                save_detection_record(user_input, label, confidence, probs[0]*100, probs[1]*100, sumber="manual")
+                # Simpan otomatis ke DB cloud
+                save_detection_record("Manual", user_input, label, confidence, probs[0]*100, probs[1]*100)
                 st.success("Hasil prediksi telah disimpan ke database.")
                 
     else:
@@ -263,3 +265,4 @@ st.markdown("""
     &copy; 2025 <b style='color:#2E86C1'>VeriView</b> | Dibuat dengan ❤️ oleh nistiaen
 </div>
 """, unsafe_allow_html=True)
+
